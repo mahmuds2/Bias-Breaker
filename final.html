@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en-US">
+	<head>
+		<meta charset='utf-8'>
+		<title>BIASED BREAKER</title>
+		<link rel="icon" type="image/png" href="images/LOGO.png" />
+		<script src="Processing.js"></script>
+		<link rel="stylesheet" type="text/css" href="style.css">
+		<script type="text/processing" data-processing-target="mycanvas">
+			
+			/* @pjs preload="images/opening_1.png" */
+			/* @pjs preload="images/instruction_screen.png" */
+			/* @pjs preload="images/character_screen.png" */
+			/* @pjs preload="images/game_screen.png" */
+			/* @pjs preload="images/gameover_screen.png" */
+			/* @pjs preload="images/Amira_Down.png" */
+			/* @pjs preload="images/Elliot_Down.png" */
+			/* @pjs preload="images/Jax_Down.png" */
+			/* @pjs preload="images/Enemy_Front.png" */
+
+			//Declares the objects globally 
+			Character amira;
+			Character elliot;
+			Character jax;
+			Enemy enemy;
+
+			//Start of Image Declerations
+			PImage img = loadImage("images/Enemy_Front.png");  
+			PImage gameStateIMG0 = loadImage("images/opening_1.png");  
+			PImage gameStateIMG1 = loadImage("images/instruction_screen.png");
+			PImage gameStateIMG2 = loadImage("images/character_screen.png");
+			PImage gameStateIMG3 = loadImage("images/game_screen.png");
+			PImage gameStateIMG4 = loadImage("images/gameover_screen.png");
+			PImage EimgFRONT = loadImage("images/Elliot_Down.png");
+			PImage AimgFRONT = loadImage("images/Amira_Down.png");
+			PImage JimgFRONT = loadImage("images/Jax_Down.png");
+			//End of Image Declarations
+
+			//Global variables and lists
+			var Bullets;
+			var stereotypeList;
+			var enemyArmy = new ArrayList();
+			var score = 0;
+			var health = 20;
+			var currentHealth=health;
+			var makeUp =800/health;
+			var gameState = 0;
+			var characterChoose = 0;
+			var dealtDamage=5;
+			var dir=0;
+			var highScore=0;
+
+			void setup(){
+			  size(800,800);
+			  smooth(); 
+			  amira = new Character(AimgFRONT);
+			  elliot = new Character(EimgFRONT);
+			  jax = new Character(JimgFRONT);
+			  Bullets = [];
+			  stereotypeList = ["Only girls like pink", "Middle Easterners hate America", "Asians are good at math", "Only boys like blue", "Poor people are lazy", "Gingers don't have souls", "Jews are cheap", "Bisexuals are confused", "Gender Roles exists", "Feminist hate men"];
+
+			  //Places the bullets
+			  for(var i = 0; i < Bullets.length; i++){
+			  	if(characterChoose == 1)
+			  		Bullets[i] = new Bullet(amira.xPos, amira.yPos, 5, 5, dir);
+			  	else if(characterChoose == 2)
+			  		Bullets[i] = new Bullet(elliot.xPos, elliot.yPos, 5, 5, dir);
+			  	else if(characterChoose == 3)
+			  		Bullets[i] = new Bullet(jax.xPos, jax.yPos, 5, 5, dir);
+			  }
+
+			  //Places the Enemies
+			  for (var i=0; i<random(10); i++){
+				enemy = new Enemy();
+				enemyArmy.add(enemy);
+			  }
+			}
+
+			void draw(){
+			//Start of Background
+			  if(gameState == 0){
+			  	background(gameStateIMG0);
+			  }
+			  else if(gameState == 1){
+			  	background(gameStateIMG1);
+			  }
+			  else if(gameState == 2){
+			  	background(gameStateIMG2);
+			  }
+			  else if(gameState == 3){
+			  	background(gameStateIMG3);
+			  }
+			  else if(gameState == 4){
+			  	background(gameStateIMG4);
+			  }
+			  //End of Background
+
+			  document.onkeydown = checkKey;
+			  textSize(28);
+			  //If game starto
+		      if(gameState == 3)
+				  {
+				  	text("SCORE: "+score, 10, 30, 500, 250);
+				  text("HIGH SCORE: "+highScore, 10, 60, 500, 250);
+
+			    noStroke();
+				//Start of Health Bar
+				if(currentHealth >= 2*(health/3)){
+			  		fill(60, 184, 27);
+				}
+				else if (currentHealth >=health/4 && currentHealth< 2*(health/3)){
+			  		fill(218, 187, 32);
+				}
+				else if (currentHealth < health/4){
+			  		fill(218, 57, 32);
+				}
+		    	rect(0, 0, currentHealth*makeUp, 25);
+			    //End of Health bar
+				
+			    
+			    //Displays Character
+			    if(characterChoose == 1)
+					amira.display();
+				else if(characterChoose == 2)
+				  	elliot.display();
+				else if(characterChoose == 3)
+				  	jax.display();
+
+
+					for(var i = 0; i < Bullets.length; i++){
+					  Bullets[i].drawBullet();
+					  Bullets[i].update();
+				   } 
+					for (var i=0; i<enemyArmy.size(); i++){
+						enemyArmy.get(i).display();
+						enemyArmy.get(i).moveEnemy();
+						for(var k = 0; k < Bullets.length; k++){
+							if(enemyArmy.get(i) != null && enemyArmy.get(i).impactB(Bullets[k]) == true){
+								enemyArmy.remove(i);
+
+								score += 5;
+								if(score>highScore)
+									highScore=score;
+								console.log("score: "+score);
+							} 
+						}
+
+						//player Damage take start
+						if(characterChoose == 1){
+							if(enemyArmy.get(i) != null && enemyArmy.get(i).impact(amira) == true){
+								currentHealth -=dealtDamage;
+								enemyArmy.remove(i);
+							}
+						}
+						else if(characterChoose == 2){
+							if(enemyArmy.get(i) != null && enemyArmy.get(i).impact(elliot) == true){
+								currentHealth -=dealtDamage;
+								enemyArmy.remove(i);
+							}
+						}
+						else if(characterChoose == 3){
+							if(enemyArmy.get(i) != null && enemyArmy.get(i).impact(jax) == true){
+								currentHealth -=dealtDamage;
+								enemyArmy.remove(i);
+							}
+						}
+						//player Damage take end
+					}
+					//Makes more Enemies
+					if(enemyArmy.size() <= 3){
+					  for (var i=0; i<5; i++){
+						enemy = new Enemy();
+						enemyArmy.add(enemy);
+					  }
+					}
+
+					//Checks for Game Over
+					if(currentHealth <= 0){
+						gameState = 4;
+					}
+				}
+			}
+
+			function resetGame(){
+				currentHealth = health;
+				characterChoose = 0;
+				gameState =0;
+				score=0;
+
+			}
+
+			function checkKey(e) {
+				e = e || window.event;
+
+				//Character Movement Start
+				if (e.keyCode == '38') { //Up arrow key
+					dir=2;
+					if(characterChoose == 1){
+						amira.moveUp();
+						amira.imgURL = loadImage("images/Amira_Up.png");
+					}
+					else if(characterChoose == 2){
+						elliot.moveUp();
+						elliot.imgURL = loadImage("images/Elliot_Up.png");
+					}
+					else if(characterChoose == 3){
+						jax.moveUp();
+						jax.imgURL = loadImage("images/Jax_Up.png");
+					}
+				}
+				else if (e.keyCode == '40') { //Down arrow key
+					dir=0;
+					if(characterChoose == 1){
+						amira.moveDown();
+						amira.imgURL = loadImage("images/Amira_Down.png")
+
+					}
+					else if(characterChoose == 2){
+						elliot.moveDown();
+						elliot.imgURL = loadImage("images/Elliot_Down.png");
+					}
+					else if(characterChoose == 3){
+						jax.moveDown();
+						jax.imgURL = loadImage("images/Jax_Down.png");
+					}
+				}
+				else if (e.keyCode == '37') { //Left arrow key
+					dir=3;
+				   if(characterChoose == 1){
+						amira.moveLeft();
+						amira.imgURL = loadImage("images/Amira_Left.png");
+					}
+					else if(characterChoose == 2){
+						elliot.moveLeft();
+						elliot.imgURL = loadImage("images/Elliot_Left.png");
+					}
+					else if(characterChoose == 3){
+						jax.moveLeft();
+						jax.imgURL = loadImage("images/Jax_Left.png");
+					}
+				}
+				else if (e.keyCode == '39') { //Right arrow key
+					dir=1;
+				   if(characterChoose == 1){
+						amira.moveRight();
+						amira.imgURL = loadImage("images/Amira_Right.png");
+					}
+					else if(characterChoose == 2){
+						elliot.moveRight();
+						elliot.imgURL = loadImage("images/Elliot_Right.png");
+					}
+					else if(characterChoose == 3){
+						jax.moveRight();
+						jax.imgURL = loadImage("images/Jax_Right.png");
+					}
+				}
+				//Character Movement End
+
+				else if (e.keyCode == '32') {
+					if(characterChoose == 1){
+						Bullet bull = new Bullet(amira.xPos + 20, amira.yPos, 10, 5, dir);
+					}
+					else if(characterChoose == 2){
+						Bullet bull = new Bullet(elliot.xPos + 20, elliot.yPos, 10, 5, dir);
+					}
+					else if(characterChoose == 3){
+						Bullet bull = new Bullet(jax.xPos + 20, jax.yPos, 10, 5, dir);
+					}
+					Bullets.push(bull);
+				}
+				else if (e.keyCode == '13' && gameState<2) { //enter
+						gameState++;
+				}
+				else if (e.keyCode == '16'&& gameState>0&&gameState<3) {//shift
+					gameState--;
+				}
+				else if (e.keyCode == '49'&& gameState==2){ //1
+					gameState  = 3;
+					characterChoose = 1;
+					amira.xPos =400;
+					amira.ypos=height -40;
+				}
+				else if (e.keyCode == '50'&& gameState==2){ //2
+					gameState = 3;
+					characterChoose = 2;
+					elliot.xPos =400;
+					elliot.ypos=height -40;
+				}
+				else if (e.keyCode == '51'&& gameState==2){ //3
+					gameState  = 3;
+					characterChoose = 3;
+					jax.xPos =400;
+					jax.ypos=height -40;
+				}
+				else if(e.keyCode == '48'&& gameState==4){ //0
+					resetGame();
+				}
+			}
+
+			class Character {
+			  var xPos = 400;
+			  var yPos = height - 40;  
+			  PImage imgURL;
+
+			  Character(img){
+			  	imgURL = img;
+			  }
+
+			  // Displays Player character 
+			  void display() {
+			    image(imgURL, xPos, yPos, 40, 40);
+			   }
+
+			void moveDown(){
+			 	if(yPos<height-40)
+				yPos += 20;
+			   }
+			void moveRight(){
+			 	if(xPos<width-40)
+				xPos += 20;
+			}
+			void moveUp(){
+			 	if(yPos>25)
+				yPos -= 20;
+			}
+			void moveLeft(){
+			 	if(xPos>0)
+				xPos -= 20;
+			}
+			 }
+
+			 class Bullet{
+			 	var rad;
+			 	var x;
+			 	var y;
+			 	var s;
+			 	var d;
+			 	Bullet(xPos, yPos, speed, radius, way){
+			 		x = xPos;
+			 		y = yPos;
+			 		s = speed;
+			 		rad = radius;
+			 		d=way;
+			 	}
+			 	void drawBullet(){
+					fill(255, 255, 255);
+					ellipse(x, y, rad, rad);
+			 	}
+			    void update() {
+				// update position of bullet on screen
+					if(d==0)
+						y += s;
+					else if(d==1)
+						x += s;
+					else if(d==2)
+						y -= s;
+					else if(d==3)
+						x -= s;
+				}  
+			 }
+
+			 class Enemy{
+			 	var xPos = round(random(800));
+			  	var yPos = round(random(800));  
+			  	var speed = 2;
+			  	var ran= round(random(9));
+
+			    /** Displays the Enemy */
+			    void display() {
+			    	noStroke();
+			    	fill(0, 0, 0);
+			    	rect(xPos+20, yPos-35, 100, 50, 3);
+			    	fill(256, 256, 256);
+			    	textSize(14);
+			    	text( stereotypeList[ran], xPos+25, yPos-30, 100, 50);
+				    image(img, xPos, yPos, 40, 40);
+			   	}
+
+			   	void moveEnemy(){
+			   		var where=round(random(0,4));
+			   		if(where==0|| where==4 && yPos<height-20)
+						yPos += speed;
+					else if(where==1 && xPos<width-20)
+						xPos += speed;
+					else if(where==2 && yPos>25)
+						yPos -= speed;
+					else if(where==3 && xPos>0)
+						xPos -= speed;
+
+					//console.log(where);
+			   		
+			   	}
+			   	boolean impactB(Bullet b) {
+				    if (xPos <=b.x && xPos+40>=b.x &&
+				    	yPos <=b.y && yPos+40>=b.y)
+				        return true;
+				    else
+				        return false;
+				  }
+				boolean impact(Character screams) {
+				    if (xPos-20<=screams.xPos && xPos+20>=screams.xPos &&
+				    	yPos-20<=screams.yPos && yPos+20>=screams.yPos)
+				        return true;
+				    else
+				        return false;
+				}
+
+			 }
+		</script>
+	</head>
+	<body>
+		<header>
+            <h1>Biased Breaker<br></h1>
+        </header>
+		<canvas id="mycanvas"></canvas>
+		
+		<h1><IMG class="displayed" src="images/Banner.png" alt="This is the Cast" width="640" height="240"></h1>
+		<!--
+		<br>And I try, oh my god do I try
+		<p class ="3">I try all the time</p> 
+		<p>In this institution <br>and I pray, oh my god do I pray <br>I pray every single day<br>For a revolution<br>
+		And so I cry sometimes When I'm lying in bed Just to get it all out What's in my head And I,<br> I am feeling a little peculiar<br>
+		And so I wake in the morning And I step outside And I take a deep breath and I get real high And I scream from the top of my lungs</p>
+		<p class ="2">What's going on?</p>-->
+	</body>
+</html>

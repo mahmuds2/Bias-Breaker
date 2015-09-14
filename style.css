@@ -1,0 +1,36 @@
+ body { 
+	background: #F0F8FF;
+}
+header{
+
+	display: block;
+    height: 100px;
+	text-align: center;	
+
+}
+
+p{	
+	text-align: center;
+	}
+
+canvas {
+    padding: 0;
+    margin: auto;
+    display: block;
+}
+
+h1{   
+    color: #345;
+	text-align: center;
+	font-size: 60px;
+	font-family:Lucida Console;
+}
+
+p.3{
+	color:Brown;
+	text-align: center;
+}
+
+p.2{
+	text-align: center;
+}
