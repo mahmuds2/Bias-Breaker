@@ -3,7 +3,7 @@
 	<head>
 		<meta charset='utf-8'>
 		<title>BIAS BREAKER</title>
-		<link rel="icon" type="image/png" href="LOGO.png" />
+		<link rel="icon" type="image/png" href="images/LOGO.png" />
 		<script src="Processing.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css">
 		<script type="text/processing" data-processing-target="mycanvas">
@@ -13,12 +13,12 @@
 			Enemy enemy;
 
 			//Start of Image Declerations
-			PImage img = loadImage("Enemy_Front.png");  
-			PImage gameStateIMG0 = loadImage("opening_1.png");  
-			PImage gameStateIMG1 = loadImage("instruction_screen.png");
-			PImage gameStateIMG2 = loadImage("character_screen.png");
-			PImage gameStateIMG3 = loadImage("game_screen.png");
-			PImage gameStateIMG4 = loadImage("gameover_screen.png");
+			PImage img = loadImage("images/Enemy_Front.png");  
+			PImage gameStateIMG0 = loadImage("images/opening_1.png");  
+			PImage gameStateIMG1 = loadImage("images/instruction_screen.png");
+			PImage gameStateIMG2 = loadImage("images/character_screen.png");
+			PImage gameStateIMG3 = loadImage("images/game_screen.png");
+			PImage gameStateIMG4 = loadImage("images/gameover_screen.png");
 			//End of Image Declarations
 
 			//Global variables and lists
@@ -40,9 +40,9 @@
 			void setup(){
 			  size(800,800);
 			  smooth(); 
-			  amiraImgList=[loadImage("Amira_Down.png"), loadImage("Amira_Right.png"), loadImage("Amira_Up.png"), loadImage("Amira_Left.png")];
-			  elliotImgList=[loadImage("Elliot_Down.png"), loadImage("Elliot_Right.png"), loadImage("Elliot_Up.png"), loadImage("Elliot_Left.png")];
-			  jaxImgList=[loadImage("Jax_Down.png"), loadImage("Jax_Right.png"), loadImage("Jax_Up.png"), loadImage("Jax_Left.png")];
+			  amiraImgList=[loadImage("images/Amira_Down.png"), loadImage("images/Amira_Right.png"), loadImage("images/Amira_Up.png"), loadImage("images/Amira_Left.png")];
+			  elliotImgList=[loadImage("images/Elliot_Down.png"), loadImage("images/Elliot_Right.png"), loadImage("images/Elliot_Up.png"), loadImage("images/Elliot_Left.png")];
+			  jaxImgList=[loadImage("images/Jax_Down.png"), loadImage("images/Jax_Right.png"), loadImage("images/Jax_Up.png"), loadImage("images/Jax_Left.png")];
 			 
 			  Bullets = [];
 			  stereotypeList = ["Only girls like pink", "Middle Easterners hate America", "Asians are good at math", "Only boys like blue", "Poor people are lazy", "Gingers don't have souls", "Jewish people are cheap", "Bisexuals are confused", "Feminists hate men"];
@@ -316,7 +316,7 @@
             <h1>Bias Breaker<br></h1>
         </header>
 		<canvas id="mycanvas"></canvas>
-		<h1><IMG class="displayed" src="Banner.png" alt="This is the Cast" width="640" height="240"></h1>
+		<h1><IMG class="displayed" src="images/Banner.png" alt="This is the Cast" width="640" height="240"></h1>
 	</body>
 </html>
 
